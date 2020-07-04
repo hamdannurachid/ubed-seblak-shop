@@ -46,7 +46,7 @@
                             Tambahkan Topping
                         </div>
                         <div class="card-body">
-                            <form action="" method="">
+                            <form id="order-form" action="" method="">
                                 @csrf
                                 <div class="form-group ">
 
@@ -56,9 +56,9 @@
                                     <br>
                                     <div class="form-check form-check-inline">
                                         @foreach ($item->toppings as $topping)
-                                        <input type="checkbox" class="form-check-input" value="{{ $topping->id }}" name="toppings_id">
+                                        <input type="checkbox" id="topping" class="form-check-input" value="{{ $topping->id }}" data-price="{{ $topping->price }}" name="toppings_id[]">
                                         <label for="" class="form-check-label pr-4"> {{ $topping->name }} </label>
-
+                                        <label for="foo" id="{{ $topping->id }}"></label>
                                         @endforeach
                                     </div>
 
@@ -66,6 +66,7 @@
 
                                     @endif
                                 </div>
+
 
 
                                 <a href="" class="btn btn-sm btn-info">Tambah Topping</a>
@@ -92,10 +93,12 @@
                                 </div>
                                 <hr>
                                 <div class="form-group row">
+                                    <label for="inputPassword" class="col-6 col-form-label"><strong>Seblak Price</strong></label>
+                                    <label for="inputPassword" class="col-6 col-form-label price">Rp. {{$item->price}}</label>
+                                    <br>
                                     <label for="inputPassword" class="col-6 col-form-label"><strong>Total</strong></label>
-
-                                        <label for="inputPassword" class="col-6 col-form-label price">Rp. {{$item->price}}</label>
-
+                                    <label for="inputPassword" class="col-6 col-form-label price" id="total-label">Rp. {{$item->price}}</label>
+                                    <input type="hidden" type="text" name="total" value="{{$item->price}}">
                                 </div>
                               </form>
                         </div>
@@ -144,5 +147,20 @@
 });
 
 </script>
-
+<script type="text/javascript">
+  const form = document.getElementById('order-form');
+  var total0 = document.getElementsByName('total')[0].value;
+  document.getElementById("order-form").addEventListener("click", function(e) {
+  if (e.target.name === "toppings_id[]") {
+    let total = Number(total0);
+    [...document.querySelectorAll('input[data-price][type=checkbox]')].forEach(function(box) {
+      if (box.checked) {
+        total += +box.dataset.price;
+      } //if
+    })
+    document.querySelector("[name=total]").value = total;
+    document.getElementById('total-label').innerHTML = "Rp. "+total;
+  }
+  })
+</script>
 @endpush
